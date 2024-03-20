@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os-version: [2019, 2022]
+        os-version: [2022]
         build-config: [debug, release, relwithdebinfo]
         build-arch: [Win32, x64]
         build-tool: ["", "-T ClangCL"]
@@ -64,33 +64,23 @@ jobs:
             install: gcc-13 g++-13
           }
         - {
-            cc: clang-12,
-            cxx: clang++-12,
-            install: clang-12
-          }
-        - {
-            cc: clang-13,
-            cxx: clang++-13,
-            install: clang-13
-          }
-        - {
-            cc: clang-14,
-            cxx: clang++-14,
-            install: clang-14
+            cc: clang-15,
+            cxx: clang++-15,
+            install: clang-15
           }
 
     steps:
     - name: Install packages
       run: |
         sudo apt-get update
-        sudo apt-get install -y xorg-dev nasm ${{ matrix.compiler.install }}
+        sudo apt-get install -y xorg-dev nasm libssl-dev ${{ matrix.compiler.install }}
 
     - name: Versions
       run: |
         cmake --version
+        git --version
         ${{ matrix.compiler.cc }} --version
         ${{ matrix.compiler.cxx }} --version
-        git --version
 
     - uses: actions/checkout@v3
       with:
@@ -105,4 +95,4 @@ jobs:
     - name: Build
       run: |
         cd build
-        cmake --build . --config ${{ matrix.build-config }} -- -j3
+        cmake --build . -- -j3
